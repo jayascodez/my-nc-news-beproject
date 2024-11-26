@@ -4,6 +4,7 @@ const db = require('../db/connection');
 const data = require('../db/data/test-data');
 const app = require('../app')
 const seed = require('../db/seeds/seed')
+const sorted = require('jest-sorted')
 
 
 afterAll(() => db.end());
@@ -83,3 +84,47 @@ describe("GET /api/articles/:article_id", () => {
     })
   });
 });
+
+describe("GET /api/articles", () => {
+  test("200: Responds with all articles", () => {
+    return request(app)
+    .get("/api/articles")
+    .expect(200)
+    .then(({body})=>{
+      expect(body.articles.length).toBe(13);
+
+      body.articles.forEach((article) => {
+        console.log(article, "<-- article in test")
+        expect(article).toMatchObject({
+          author: expect.any(String),
+          title: expect.any(String),
+          article_id: expect.any(Number),
+          topic: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+          comment_count: expect.any(String)
+        })
+      })
+    })
+  });
+  test("200: Responds with articles sorted in desc date", () => {
+    return request(app)
+    .get("/api/articles")
+    .expect(200)
+    .then(({body}) => {
+      console.log(body.articles, "<----bodyArticles")
+      expect(body.articles).toBeSortedBy('created_at', {
+        descending: true,
+      })
+    })
+  });
+  test("404: Errors if link not found", () => {
+    return request(app)
+    .get("/api/not_articles")
+    .then(({body}) => {
+      expect(body.msg).toBe('404: not found')
+    })
+  });
+
+})
