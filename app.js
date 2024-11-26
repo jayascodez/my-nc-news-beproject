@@ -2,9 +2,8 @@ const endpointJson = require("./endpoints.json");
 const express = require('express');
 const app = express();
 const {fetchTopics} = require("./controllers/topicsController");
-const {
-    fetchArticleById, fetchArticles, fetchCommentsByArticleId
-} = require("./controllers/articleController");
+const {fetchArticleById, fetchArticles} = require("./controllers/articleController");
+const {fetchCommentsByArticleId, postCommentsByArticleId} = require("./controllers/commentsController")
 const {customErrors, serverError} = require("./errorhandling")
 
 app.use(express.json());
@@ -20,6 +19,8 @@ app.get('/api/articles/:article_id', fetchArticleById);
 app.get('/api/articles', fetchArticles);
 
 app.get('/api/articles/:article_id/comments', fetchCommentsByArticleId);
+
+app.post('/api/articles/:article_id/comments', postCommentsByArticleId)
 
 
 app.all("*", (req, res) => {

@@ -30,19 +30,4 @@ const selectArticles = () => {
     })
 };
 
-const selectCommentsByArticleId = (article_id) => {
-    const SQLquery = `SELECT * FROM comments WHERE article_id = $1
-    ORDER BY created_at DESC`
-    const queryValues = [article_id]
-
-    return db.query(SQLquery, queryValues)
-    .then(( {rows} ) => {
-        // if(rows.length === 0){
-        //     return Promise.reject({status: 404, msg: "404: not found"})
-        // }
-        return rows;
-    })
-}
-
-
-module.exports = {selectArticleById, selectArticles, selectCommentsByArticleId}
+module.exports = {selectArticleById, selectArticles}

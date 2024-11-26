@@ -6,10 +6,8 @@ const app = require('../app')
 const seed = require('../db/seeds/seed')
 const sorted = require('jest-sorted')
 
-
 afterAll(() => db.end());
 beforeEach(()=> seed(data));
-
 
 describe("GET /api", () => {
   test("200: Responds with an object detailing the documentation for each endpoint", () => {
@@ -172,4 +170,72 @@ describe("GET /api/articles/:article_id/comments", () => {
       expect(body.msg).toBe('404: not found')
     })
   })
+});
+
+describe("POST /api/articles/:article_id/comments", () => {
+  test("201: Adds a new comment to selected article", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "I love all articles",
+    };
+    return request(app)
+      .post("/api/articles/3/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body: { comment } }) => {
+        expect(comment).toMatchObject({
+          article_id: 3,
+          author: "butter_bridge",
+          body: "I love all articles",
+          comment_id: expect.any(Number),
+          created_at: expect.any(String),
+          votes: 0,
+        })
+      })
+  });
+  test("201: Adds a new comment to article with existing comments", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "I love all articles",
+    };
+    return request(app)
+      .post("/api/articles/9/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body: { comment } }) => {
+        expect(comment).toMatchObject({
+          article_id: 9,
+          author: "butter_bridge",
+          body: "I love all articles",
+          comment_id: expect.any(Number),
+          created_at: expect.any(String),
+          votes: 0,
+        })
+      })
+  });
+  test("400: Errors when attempting to post a bad request", () => {
+    const newComment = {
+      body: "no username so shouldn't post"
+    };
+    return request(app)
+    .post("/api/articles/3/comments")
+    .send(newComment)
+    .expect(400)
+    .then(( {body} ) => {
+      expect(body.msg).toBe("400: bad request")
+    })
+  });
+  test("404: Errors when trying to post to an article which doesnt exist", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "I love all articles",
+    };
+    return request(app)
+      .post("/api/articles/345/comments")
+      .send(newComment)
+      .expect(404)
+      .then(( {body} ) => {
+        expect(body.msg).toBe("404: not found")
+      })
+  });
 });
