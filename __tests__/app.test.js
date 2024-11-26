@@ -94,7 +94,6 @@ describe("GET /api/articles", () => {
       expect(body.articles.length).toBe(13);
 
       body.articles.forEach((article) => {
-        console.log(article, "<-- article in test")
         expect(article).toMatchObject({
           author: expect.any(String),
           title: expect.any(String),
@@ -113,7 +112,6 @@ describe("GET /api/articles", () => {
     .get("/api/articles")
     .expect(200)
     .then(({body}) => {
-      console.log(body.articles, "<----bodyArticles")
       expect(body.articles).toBeSortedBy('created_at', {
         descending: true,
       })
@@ -126,5 +124,52 @@ describe("GET /api/articles", () => {
       expect(body.msg).toBe('404: not found')
     })
   });
+});
 
-})
+describe("GET /api/articles/:article_id/comments", () => {
+  test("200: Responds with all comments on an article", () => {
+    return request(app)
+    .get("/api/articles/1/comments")
+    .expect(200)
+    .then(( {body} ) => {
+      expect(body.comments).toHaveLength(11)
+      body.comments.forEach((comment) => {
+        expect(comment).toMatchObject({
+          comment_id: expect.any(Number),
+          votes: expect.any(Number),
+          created_at: expect.any(String),
+          author: expect.any(String),
+          body: expect.any(String),
+          article_id: expect.any(Number),
+        })
+      })
+      expect(body.comments).toBeSortedBy('created_at', {
+        descending: true,
+      })
+    })
+  });
+  test("200: Responds with empty array if no comments on an article", () => {
+    return request(app)
+    .get("/api/articles/10/comments")
+    .expect(200)
+    .then(( {body} ) => {
+      expect(body.comments).toEqual([])
+    })
+  })
+  test("400: Errors if given a bad article_id", () => {
+    return request(app)
+    .get("/api/articles/cats/comments")
+    .expect(400)
+    .then(({body})=> {
+      expect(body.msg).toBe('400: bad request')
+    })
+  });
+  test("404: Errors if given an article_id which doesn't exist", () => {
+    return request(app)
+    .get("/api/articles/1234/comments")
+    .expect(404)
+    .then(({body}) => {
+      expect(body.msg).toBe('404: not found')
+    })
+  })
+});
