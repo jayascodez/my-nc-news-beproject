@@ -225,6 +225,19 @@ describe("POST /api/articles/:article_id/comments", () => {
       expect(body.msg).toBe("400: bad request")
     })
   });
+  test("400: Errors when attempting to post using an unexistent username", () => {
+    const newComment = {
+      username: "helllo123",
+      body: "i love articles"
+    };
+    return request(app)
+    .post("/api/articles/3/comments")
+    .send(newComment)
+    .expect(400)
+    .then(( {body} ) => {
+      expect(body.msg).toBe("400: bad request")
+    })
+  });
   test("404: Errors when trying to post to an article which doesnt exist", () => {
     const newComment = {
       username: "butter_bridge",
