@@ -5,10 +5,9 @@ const data = require('../db/data/test-data');
 const app = require('../app')
 const seed = require('../db/seeds/seed')
 
-const topics = require("../db/data/test-data/topics")
 
-afterAll(() => db.end())
-beforeEach(()=> seed(data))
+afterAll(() => db.end());
+beforeEach(()=> seed(data));
 
 
 describe("GET /api", () => {
@@ -36,9 +35,51 @@ describe("GET /api/topics", () => {
       })
     })
   });
+
   test("404: Error when endpoint not found" ,() => {
     return request(app)
-    .get("/api/topic")
+    .get("/api/not-a-topic")
     .expect(404)
+    .then(({body}) => {
+      expect(body.msg).toBe('404: not found')
+    })
+  });
+});
+
+describe("GET /api/articles/:article_id", () => {
+  test("200: Responds with an article by its ID", () => {
+    return request(app)
+    .get("/api/articles/4")
+    .expect(200)
+    .then(({body}) => {
+        expect(body.article).toMatchObject({
+          author: expect.any(String),
+          title: expect.any(String),
+          article_id: expect.any(Number),
+          body: expect.any(String),
+          topic: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String)
+        })
+    })
+  });
+
+  test('400: errors when given bad request', () => {
+    return request(app)
+    .get("/api/articles/fireworks")
+    .expect(400)
+    .then(({body})=> {
+      expect(body.msg).toBe('400: bad request')
+    })
+  });
+
+  test('404: errors if given an ID number that doesn\'t exist', () => {
+    return request(app)
+    .get("/api/articles/1234")
+    .expect(404)
+    .then(({body}) => {
+      expect(body.msg).toBe('404: not found')
+    })
   });
 });

@@ -1,32 +1,28 @@
 const endpointJson = require("./endpoints.json");
 const express = require('express');
 const app = express();
-const {
-    fetchTopics
-} = require("./controllers/controller")
+const {fetchTopics} = require("./controllers/topicsController");
+const {fetchArticleById} = require("./controllers/articleController");
+const {customErrors, serverError} = require("./errorhandling")
 
-app.use(express.json());
-
-
+// app.use(express.json());
 
 app.get("/api", (req, res) => {
     res.status(200).send({endpoints: endpointJson})
 });
 
-app.get('/api/topics', fetchTopics)
+app.get('/api/topics', fetchTopics);
+
+app.get('/api/articles/:article_id', fetchArticleById);
 
 
-app.use((err, req, res, next) => {
-    if (err.code === "22P02"){
-        res.status(400).send({msg: '404: invalid URL, bad request'})
-    }
-    if (err.status && err.msg){
-        res.status(err.status).send({msg: err.msg})
-    }
-})
-
-app.use((err, req, res, next) => {
-    res.status(500).send({ msg: 'Server Error: Something went wrong!' });
+app.all("*", (req, res) => {
+    res.status(404).send({ msg: "404: not found" });
   });
+  
+app.use(customErrors);
+  
+app.use(serverError);
+
 
 module.exports = app
