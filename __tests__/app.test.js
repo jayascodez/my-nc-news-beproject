@@ -138,7 +138,7 @@ describe("GET /api/articles/:article_id/comments", () => {
           created_at: expect.any(String),
           author: expect.any(String),
           body: expect.any(String),
-          article_id: expect.any(Number),
+          article_id: 1,
         })
       })
       expect(body.comments).toBeSortedBy('created_at', {
@@ -225,6 +225,18 @@ describe("POST /api/articles/:article_id/comments", () => {
       expect(body.msg).toBe("400: bad request")
     })
   });
+  test("400: Errors when attempting to post a bad request", () => {
+    const newComment = {
+      username: "butter_bridge"
+    };
+    return request(app)
+    .post("/api/articles/3/comments")
+    .send(newComment)
+    .expect(400)
+    .then(( {body} ) => {
+      expect(body.msg).toBe("400: bad request")
+    })
+  });
   test("400: Errors when attempting to post using an unexistent username", () => {
     const newComment = {
       username: "helllo123",
@@ -250,5 +262,58 @@ describe("POST /api/articles/:article_id/comments", () => {
       .then(( {body} ) => {
         expect(body.msg).toBe("404: not found")
       })
+  });
+});
+
+describe("PATCH /api/articles/:article_id", () => {
+  test("200: Responds with updated article by article id", () => {
+    const patchedArticle = { inc_votes : 5 }
+    return request(app)
+    .patch("/api/articles/3")
+    .send(patchedArticle)
+    .expect(200)
+    .then(({body: {article}}) => {
+      expect(article).toMatchObject({
+        author: expect.any(String),
+        title: expect.any(String),
+        article_id: 3,
+        body: expect.any(String),
+        topic: expect.any(String),
+        created_at: expect.any(String),
+        votes: expect.any(Number),
+        article_img_url: expect.any(String)
+      })
+      expect(article.votes).toBe(5)
+    })
+  });
+  test("400: Errors when trying to send an invalid update", () => {
+    const patchedArticle = {newAuthor: "sam"}
+    return request(app)
+    .patch("/api/articles/4")
+    .send(patchedArticle)
+    .expect(400)
+    .then(({body})=> {
+      expect(body.msg).toBe('400: bad request')
+    })
+  });
+  test("400: Errors when trying to send an invalid update", () => {
+    const patchedArticle = { inc_votes : 5 }
+    return request(app)
+    .patch("/api/articles/rainbow")
+    .send(patchedArticle)
+    .expect(400)
+    .then(({body})=> {
+      expect(body.msg).toBe('400: bad request')
+    })
+  });
+  test("404: Errors if sending to invalid article id", () => {
+    const patchedArticle = { inc_votes : 5 }
+    return request(app)
+    .patch("/api/articles/3636")
+    .send(patchedArticle)
+    .expect(404)
+    .then(({body})=> {
+      expect(body.msg).toBe('404: not found')
+    })
   });
 });

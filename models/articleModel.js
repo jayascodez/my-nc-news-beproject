@@ -30,4 +30,21 @@ const selectArticles = () => {
     })
 };
 
-module.exports = {selectArticleById, selectArticles}
+const updateArticlesByID = (patchedArticle, article_id) => {
+    const {inc_votes} = patchedArticle
+    const SQLquery = `UPDATE articles
+    SET votes = votes + $1
+    WHERE article_id = $2
+    RETURNING *`
+    const queryValues = [inc_votes, article_id]
+
+    return db.query(SQLquery, queryValues)
+    .then(( {rows} ) => {
+        if(rows.length === 0){
+            return Promise.reject({status: 404, msg: "404: not found"})
+        }
+    return rows[0]
+    })
+}
+
+module.exports = {selectArticleById, selectArticles, updateArticlesByID}
