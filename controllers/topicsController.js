@@ -1,6 +1,4 @@
-const {
-    selectTopics
-} = require('../models/topicsModel')
+const {selectTopics} = require('../models/topicsModel')
 
 const fetchTopics= (req,res,next)=>{
     selectTopics().then((topics)=>{

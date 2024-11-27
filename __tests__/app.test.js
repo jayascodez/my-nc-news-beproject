@@ -318,7 +318,7 @@ describe("PATCH /api/articles/:article_id", () => {
   });
 });
 
-describe.only("DELETE /api/comments/:comment_id", () => {
+describe("DELETE /api/comments/:comment_id", () => {
   test("204: Sucessfully deleted comment by comment ID", () => {
     return request(app)
     .delete("/api/comments/1")
@@ -332,4 +332,30 @@ describe.only("DELETE /api/comments/:comment_id", () => {
       expect(body.msg).toBe("404: not found")
     })
   });
-})
+});
+
+describe("GET /api/users", () => {
+  test("200: Responds with all users", () => {
+    return request(app)
+    .get("/api/users")
+    .expect(200)
+    .then(({body})=>{
+      expect(body.users.length).toBe(4);
+
+      body.users.forEach((user) => {
+        expect(typeof user.username).toBe("string")
+        expect(typeof user.name).toBe("string")
+        expect(typeof user.avatar_url).toBe("string")
+      })
+    })
+  });
+
+  test("404: Error when endpoint not found" ,() => {
+    return request(app)
+    .get("/api/not-users")
+    .expect(404)
+    .then(({body}) => {
+      expect(body.msg).toBe('404: not found')
+    })
+  });
+});
