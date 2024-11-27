@@ -11,7 +11,8 @@ const fetchArticleById = (req, res, next) => {
 };
 
 const fetchArticles = (req, res, next) => {
-    selectArticles().then((articles) => {
+    const {sort_by, order} = req.query
+    selectArticles(sort_by, order).then((articles) => {
         res.status(200).send( {articles} );
     })
     .catch(next)
