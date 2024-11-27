@@ -320,9 +320,16 @@ describe("PATCH /api/articles/:article_id", () => {
 
 describe.only("DELETE /api/comments/:comment_id", () => {
   test("204: Sucessfully deleted comment by comment ID", () => {
-
-  })
+    return request(app)
+    .delete("/api/comments/1")
+    .expect(204)
+  });
   test("404: Errors if trying to delete a comment that doesnt exist", () => {
-    
-  })
+    return request(app)
+    .delete("/api/comments/222")
+    .expect(404)
+    .then(({body}) => {
+      expect(body.msg).toBe("404: not found")
+    })
+  });
 })

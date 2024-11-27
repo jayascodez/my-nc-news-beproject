@@ -3,7 +3,7 @@ const express = require('express');
 const app = express();
 const {fetchTopics} = require("./controllers/topicsController");
 const {fetchArticleById, fetchArticles, patchArticlesByID} = require("./controllers/articleController");
-const {fetchCommentsByArticleId, postCommentsByArticleId} = require("./controllers/commentsController")
+const {fetchCommentsByArticleId, postCommentsByArticleId, fetchCommentByID} = require("./controllers/commentsController")
 const {customErrors, serverError} = require("./errorhandling")
 
 app.use(express.json());
@@ -23,6 +23,8 @@ app.get('/api/articles/:article_id/comments', fetchCommentsByArticleId);
 app.post('/api/articles/:article_id/comments', postCommentsByArticleId)
 
 app.patch('/api/articles/:article_id', patchArticlesByID)
+
+app.delete('/api/comments/:comment_id', fetchCommentByID)
 
 app.all("*", (req, res) => {
     res.status(404).send({ msg: "404: not found" });
