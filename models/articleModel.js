@@ -13,39 +13,33 @@ const selectArticleById = (article_id) => {
     })
 };
 
-const selectArticles = (sort_by = 'created_at', order = `DESC`) => {
-    const validSortBy = ["author",
-        "title",
-        "article_id",
-        "body",
-        "topic",
-        "created_at",
-        "votes",
-        "article_img_url"]
-    
+const selectArticles = (sort_by = 'created_at', order_by = `DESC`, topic) => {
+    const validSortBy = ["author", "title", "article_id", "body", "topic", "created_at", "votes", "article_img_url"]
     const validOrder = ["ASC", "DESC"]
+    const validTopics = ["mitch", "cats"]
 
     if(!validSortBy.includes(sort_by)){
         return Promise.reject({status: 400, msg: "400: bad request"})
     }
-
-    if(!validOrder.includes(order)){
+    if(!validOrder.includes(order_by)){
         return Promise.reject({status: 400, msg: "400: bad request"})
     }
-    
+    if(topic && !validTopics.includes(topic)){
+        return Promise.reject({status: 400, msg: "400: bad request"})
+    }
+
     let SQLquery = `SELECT 
     articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.article_img_url, articles.votes,
     COUNT (comments.comment_id) AS comment_count
     FROM articles
-    LEFT JOIN comments ON articles.article_id = comments.article_id
-    GROUP BY articles.article_id `
+    LEFT JOIN comments ON articles.article_id = comments.article_id `
     const queryValues = []
 
-    if(sort_by){
-        SQLquery += `ORDER BY ${sort_by} `
+    if(topic){
+        SQLquery += `WHERE articles.topic='${topic}' `
     }
-    if(order){
-        SQLquery += `${order}`
+    if(sort_by, order_by){
+        SQLquery += `GROUP BY articles.article_id ORDER BY ${sort_by} ${order_by}`
     }
 
     return db.query(SQLquery, queryValues)

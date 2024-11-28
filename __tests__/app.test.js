@@ -361,9 +361,9 @@ describe("GET /api/users", () => {
 });
 
 describe("GET /api/articles (sorting queries)", () => {
-  test("200: Respoonds with all articles sorted by select column", () => {
+  test("200: Responds with all articles sorted by select column", () => {
     return request(app)
-    .get("/api/articles?sort_by=votes&order=DESC")
+    .get("/api/articles?sort_by=votes&order_by=DESC")
     .expect(200)
     .then(({body}) => {
       expect(body.articles).toBeSortedBy('votes', {
@@ -371,9 +371,9 @@ describe("GET /api/articles (sorting queries)", () => {
       })
     })
   });
-  test("200: Respoonds with all articles sorted by select column", () => {
+  test("200: Responds with all articles sorted by select column", () => {
     return request(app)
-    .get("/api/articles?sort_by=title&order=ASC")
+    .get("/api/articles?sort_by=title&order_by=ASC")
     .expect(200)
     .then(({body}) => {
       expect(body.articles).toBeSortedBy('title', {
@@ -383,7 +383,7 @@ describe("GET /api/articles (sorting queries)", () => {
   });
   test("400: Errors if sort_by query is invalid", () => {
     return request(app)
-    .get("/api/articles?sort_by=sunflower&order=ASC")
+    .get("/api/articles?sort_by=sunflower&order_by=ASC")
     .expect(400)
     .then(({body}) => {
       expect(body.msg).toBe("400: bad request")
@@ -391,10 +391,29 @@ describe("GET /api/articles (sorting queries)", () => {
   });
   test("400: Errors if order query is invalid", () => {
     return request(app)
-    .get("/api/articles?sort_by=title&order=BIGGEST")
+    .get("/api/articles?sort_by=title&order_by=BIGGEST")
     .expect(400)
     .then(({body}) => {
       expect(body.msg).toBe("400: bad request")
     })
+  });
+});
+
+describe("GET /api/articles (topic query)", () => {
+  test("200: filters articles by the topic specified in the query", () => {
+    return request(app)
+    .get("/api/articles?topic=mitch")
+    .expect(200)
+    .then(({body}) => {
+      expect(body.articles.length).toBe(12)
+    })
+  });
+  test("400: Errors if topic query is invalid", () => {
+    return request(app)
+    .get("/api/articles?topic=not_a_topic")
+    .expect(400)
+    .then(({body}) => {
+      expect(body.msg).toBe("400: bad request")
+    });
   });
 })
