@@ -29,7 +29,6 @@ app.delete('/api/comments/:comment_id', fetchCommentByID);
 
 app.get('/api/users', fetchUsers)
 
-
 app.all("*", (req, res) => {
     res.status(404).send({ msg: "404: not found" });
   }); 

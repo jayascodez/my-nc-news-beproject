@@ -417,3 +417,13 @@ describe("GET /api/articles (topic query)", () => {
     });
   });
 })
+
+// describe("GET /api/articles/:article_id (comment_count)", () => {
+//   test("200: Responds with total count of all comments with select article ID", () => {
+
+//   })
+// })
+
+// describe("General server errors", () => {
+//   test("404: errors if incorrect endpoint (users 404 eg)")
+// })
