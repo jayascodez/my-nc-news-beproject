@@ -1,13 +1,32 @@
-# Northcoders News API
+# My Northcoders News API BE Project 
 
-For instructions, please head over to [L2C NC News](https://l2c.northcoders.com/courses/be/nc-news).
+## Description
+This project is a backend API designed for a news application. The API allows users to interact with the news articles, comments and user profiles. This project is built with node.js and interacts with a PostgreSQL database. The aim is to provide a robust, scalable backend to serve news data to the front end.
 
-what files a developer must add in order to successfully connect to the two databases locally?
--need to run setup-dbs command
--install dotenv and pg
--npm run prepare
--run seed command 
+## Installation Instructions
+1. **Clone the repository**
+    clone the repo by pasting https://github.com/jayascodez/my-nc-news-beproject.git into the terminal
+2. **Install Dependencies**
+    run npm install to install dependancies/dev-dependancies
+3. **Seed Local Database**
+    run the npm setup-dbs script
+    run the npm seed script 
+4. **Setup Testing**
+    run the npm prepare script
+    run npm test to access tests
 
---- 
+## Hosted Version
+https://nc-news-be-project-1ajv.onrender.com/api
+
+
+## Creating .env Files
+Create two .env files: .env.development and .env.test
+
+## Versions
+This was built using:
+node v22.9.0
+PostgreSQL 16.4
+
+---------------------------
 
 This portfolio project was created as part of a Digital Skills Bootcamp in Software Engineering provided by [Northcoders](https://northcoders.com/)
