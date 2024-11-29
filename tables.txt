@@ -1,8 +1,6 @@
 You are now connected to database "nc_news_test" as user "jaya".
- slug  |          description           
--------+--------------------------------
- mitch | The man, the Mitch, the legend
- cats  | Not dogs
- paper | what books are made of
-(3 rows)
+    author     | title | article_id | topic |     created_at      |                                            article_img_url                                            | votes |           body            | comment_count 
+---------------+-------+------------+-------+---------------------+-------------------------------------------------------------------------------------------------------+-------+---------------------------+---------------
+ icellusedkars | A     |          6 | mitch | 2020-10-18 02:00:00 | https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700 |     0 | Delicious tin of cat food |             1
+(1 row)
 

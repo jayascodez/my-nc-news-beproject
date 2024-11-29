@@ -1,7 +1,14 @@
 const db = require("../db/connection")
 
 const selectArticleById = (article_id) => {
-    const SQLquery = `SELECT * FROM articles WHERE article_id = $1`
+    const SQLquery = `SELECT 
+    articles.author, articles.title, articles.article_id, articles.body, articles.topic, articles.created_at, articles.article_img_url, articles.votes,
+    CAST(COUNT(comments.comment_id) AS INTEGER) AS comment_count
+    FROM articles
+    LEFT JOIN comments ON articles.article_id = comments.article_id
+    WHERE articles.article_id = $1
+    GROUP BY articles.article_id;`
+
     const queryValues = [article_id]
 
     return db.query(SQLquery, queryValues)
@@ -47,14 +54,17 @@ const selectArticles = async (sort_by = 'created_at', order_by = `DESC`, topic) 
     FROM articles
     LEFT JOIN comments ON articles.article_id = comments.article_id `
 
+    const queryValues = []
+
     if(topic){
         SQLquery += `WHERE articles.topic='${topic}' `
     }
+
     if(sort_by, order_by){
         SQLquery += `GROUP BY articles.article_id ORDER BY ${sort_by} ${order_by}`
     }
 
-    return db.query(SQLquery)
+    return db.query(SQLquery, queryValues)
     .then(( {rows} ) => {
         return rows
     })
