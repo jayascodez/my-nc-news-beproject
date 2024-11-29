@@ -13,10 +13,23 @@ const selectArticleById = (article_id) => {
     })
 };
 
-const selectArticles = (sort_by = 'created_at', order_by = `DESC`, topic) => {
+const addingValidTopics = () => {
+    const SQLquery = `SELECT * FROM topics`
+    const values = []
+
+    return db.query(SQLquery, values)
+    .then(({rows}) => {
+        rows.forEach((topicObj) => {
+            values.push(topicObj.slug)
+        })
+        return values
+    })
+};
+
+const selectArticles = async (sort_by = 'created_at', order_by = `DESC`, topic) => {
     const validSortBy = ["author", "title", "article_id", "body", "topic", "created_at", "votes", "article_img_url"]
     const validOrder = ["ASC", "DESC"]
-    const validTopics = ["mitch", "cats"]
+    const validTopics = await addingValidTopics()
 
     if(!validSortBy.includes(sort_by)){
         return Promise.reject({status: 400, msg: "400: bad request"})
@@ -33,7 +46,6 @@ const selectArticles = (sort_by = 'created_at', order_by = `DESC`, topic) => {
     COUNT (comments.comment_id) AS comment_count
     FROM articles
     LEFT JOIN comments ON articles.article_id = comments.article_id `
-    const queryValues = []
 
     if(topic){
         SQLquery += `WHERE articles.topic='${topic}' `
@@ -42,11 +54,12 @@ const selectArticles = (sort_by = 'created_at', order_by = `DESC`, topic) => {
         SQLquery += `GROUP BY articles.article_id ORDER BY ${sort_by} ${order_by}`
     }
 
-    return db.query(SQLquery, queryValues)
+    return db.query(SQLquery)
     .then(( {rows} ) => {
         return rows
     })
 };
+
 
 const updateArticlesByID = (patchedArticle, article_id) => {
     const {inc_votes} = patchedArticle
@@ -65,4 +78,4 @@ const updateArticlesByID = (patchedArticle, article_id) => {
     })
 }
 
-module.exports = {selectArticleById, selectArticles, updateArticlesByID}
+module.exports = {addingValidTopics, selectArticleById, selectArticles, updateArticlesByID}

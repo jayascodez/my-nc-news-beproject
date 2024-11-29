@@ -35,14 +35,6 @@ describe("GET /api/topics", () => {
     })
   });
 
-  test("404: Error when endpoint not found" ,() => {
-    return request(app)
-    .get("/api/not-a-topic")
-    .expect(404)
-    .then(({body}) => {
-      expect(body.msg).toBe('404: not found')
-    })
-  });
 });
 
 describe("GET /api/articles/:article_id", () => {
@@ -113,13 +105,6 @@ describe("GET /api/articles", () => {
       expect(body.articles).toBeSortedBy('created_at', {
         descending: true,
       })
-    })
-  });
-  test("404: Errors if link not found", () => {
-    return request(app)
-    .get("/api/not_articles")
-    .then(({body}) => {
-      expect(body.msg).toBe('404: not found')
     })
   });
 });
@@ -349,15 +334,6 @@ describe("GET /api/users", () => {
       })
     })
   });
-
-  test("404: Error when endpoint not found" ,() => {
-    return request(app)
-    .get("/api/not-users")
-    .expect(404)
-    .then(({body}) => {
-      expect(body.msg).toBe('404: not found')
-    })
-  });
 });
 
 describe("GET /api/articles (sorting queries)", () => {
@@ -406,6 +382,19 @@ describe("GET /api/articles (topic query)", () => {
     .expect(200)
     .then(({body}) => {
       expect(body.articles.length).toBe(12)
+      body.articles.forEach((article) => {
+        expect(article).toMatchObject({
+          topic: "mitch"
+        })
+      })
+    })
+  });
+  test("200: Returns empty array if topic is valid and has no articles", () => {
+    return request(app)
+    .get("/api/articles?topic=paper")
+    .expect(200)
+    .then(({body}) => {
+      expect(body.articles.length).toBe(0)
     })
   });
   test("400: Errors if topic query is invalid", () => {
@@ -424,6 +413,13 @@ describe("GET /api/articles (topic query)", () => {
 //   })
 // })
 
-// describe("General server errors", () => {
-//   test("404: errors if incorrect endpoint (users 404 eg)")
-// })
+describe("General server errors", () => {
+  test("404: errors if incorrect endpoint (users 404 eg)" ,() => {
+    return request(app)
+    .get("/api/not-a-thing")
+    .expect(404)
+    .then(({body}) => {
+      expect(body.msg).toBe('404: not found')
+    })
+  });
+})

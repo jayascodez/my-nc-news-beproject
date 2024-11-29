@@ -1,4 +1,5 @@
-const {selectArticleById, selectArticles, updateArticlesByID} = require("../models/articleModel");
+const {selectArticleById, selectArticles, updateArticlesByID,
+} = require("../models/articleModel");
 
 const fetchArticleById = (req, res, next) => {
     const {article_id} = req.params
@@ -12,10 +13,12 @@ const fetchArticleById = (req, res, next) => {
 
 const fetchArticles = (req, res, next) => {
     const {sort_by, order_by, topic} = req.query
-    selectArticles(sort_by, order_by, topic).then((articles) => {
-        res.status(200).send( {articles} );
-    })
-    .catch(next)
+
+    return selectArticles(sort_by, order_by, topic)
+        .then((articles) => {
+            res.status(200).send({ articles });
+        })
+        .catch(next)
 };
 
 const patchArticlesByID = (req, res, next) => {
