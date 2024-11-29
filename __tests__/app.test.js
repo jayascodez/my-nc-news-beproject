@@ -4,7 +4,6 @@ const db = require('../db/connection');
 const data = require('../db/data/test-data');
 const app = require('../app')
 const seed = require('../db/seeds/seed')
-const sorted = require('jest-sorted')
 
 afterAll(() => db.end());
 beforeEach(()=> seed(data));
@@ -55,7 +54,26 @@ describe("GET /api/articles/:article_id", () => {
         })
     })
   });
-
+  describe("Comment_counts", () => {
+    test("200: Responds with total count of all comments with select article ID", () => {
+      return request(app)
+      .get("/api/articles/6")
+      .expect(200)
+      .then(({body}) => {
+        expect(body.article).toMatchObject({
+          author: expect.any(String),
+          title: expect.any(String),
+          article_id: 6,
+          topic: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+          comment_count: expect.any(Number)
+        })
+      })
+    });
+    //400 error tests are complete in the previous GET with the endpoint
+  });
   test('400: errors when given bad request', () => {
     return request(app)
     .get("/api/articles/fireworks")
@@ -107,6 +125,76 @@ describe("GET /api/articles", () => {
       })
     })
   });
+  describe("Sorting Queries", () => {
+    test("200: Responds with all articles sorted by select column", () => {
+      return request(app)
+      .get("/api/articles?sort_by=votes&order_by=DESC")
+      .expect(200)
+      .then(({body}) => {
+        expect(body.articles).toBeSortedBy('votes', {
+          descending: true,
+        })
+      })
+    });
+    test("200: Responds with all articles sorted by select column", () => {
+      return request(app)
+      .get("/api/articles?sort_by=title&order_by=ASC")
+      .expect(200)
+      .then(({body}) => {
+        expect(body.articles).toBeSortedBy('title', {
+          descending: false,
+        })
+      })
+    });
+    test("400: Errors if sort_by query is invalid", () => {
+      return request(app)
+      .get("/api/articles?sort_by=sunflower&order_by=ASC")
+      .expect(400)
+      .then(({body}) => {
+        expect(body.msg).toBe("400: bad request")
+      })
+    });
+    test("400: Errors if order query is invalid", () => {
+      return request(app)
+      .get("/api/articles?sort_by=title&order_by=BIGGEST")
+      .expect(400)
+      .then(({body}) => {
+        expect(body.msg).toBe("400: bad request")
+      })
+    });
+  });
+  
+  describe("Topic Queries", () => {
+    test("200: filters articles by the topic specified in the query", () => {
+      return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then(({body}) => {
+        expect(body.articles.length).toBe(12)
+        body.articles.forEach((article) => {
+          expect(article).toMatchObject({
+            topic: "mitch"
+          })
+        })
+      })
+    });
+    test("200: Returns empty array if topic is valid and has no articles", () => {
+      return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({body}) => {
+        expect(body.articles.length).toBe(0)
+      })
+    });
+    test("400: Errors if topic query is invalid", () => {
+      return request(app)
+      .get("/api/articles?topic=not_a_topic")
+      .expect(400)
+      .then(({body}) => {
+        expect(body.msg).toBe("400: bad request")
+      });
+    });
+  })
 });
 
 describe("GET /api/articles/:article_id/comments", () => {
@@ -271,6 +359,7 @@ describe("PATCH /api/articles/:article_id", () => {
       expect(article.votes).toBe(5)
     })
   });
+
   test("400: Errors when trying to send an invalid update", () => {
     const patchedArticle = {newAuthor: "sam"}
     return request(app)
@@ -334,98 +423,6 @@ describe("GET /api/users", () => {
       })
     })
   });
-});
-
-describe("GET /api/articles (sorting queries)", () => {
-  test("200: Responds with all articles sorted by select column", () => {
-    return request(app)
-    .get("/api/articles?sort_by=votes&order_by=DESC")
-    .expect(200)
-    .then(({body}) => {
-      expect(body.articles).toBeSortedBy('votes', {
-        descending: true,
-      })
-    })
-  });
-  test("200: Responds with all articles sorted by select column", () => {
-    return request(app)
-    .get("/api/articles?sort_by=title&order_by=ASC")
-    .expect(200)
-    .then(({body}) => {
-      expect(body.articles).toBeSortedBy('title', {
-        descending: false,
-      })
-    })
-  });
-  test("400: Errors if sort_by query is invalid", () => {
-    return request(app)
-    .get("/api/articles?sort_by=sunflower&order_by=ASC")
-    .expect(400)
-    .then(({body}) => {
-      expect(body.msg).toBe("400: bad request")
-    })
-  });
-  test("400: Errors if order query is invalid", () => {
-    return request(app)
-    .get("/api/articles?sort_by=title&order_by=BIGGEST")
-    .expect(400)
-    .then(({body}) => {
-      expect(body.msg).toBe("400: bad request")
-    })
-  });
-});
-
-describe("GET /api/articles (topic query)", () => {
-  test("200: filters articles by the topic specified in the query", () => {
-    return request(app)
-    .get("/api/articles?topic=mitch")
-    .expect(200)
-    .then(({body}) => {
-      expect(body.articles.length).toBe(12)
-      body.articles.forEach((article) => {
-        expect(article).toMatchObject({
-          topic: "mitch"
-        })
-      })
-    })
-  });
-  test("200: Returns empty array if topic is valid and has no articles", () => {
-    return request(app)
-    .get("/api/articles?topic=paper")
-    .expect(200)
-    .then(({body}) => {
-      expect(body.articles.length).toBe(0)
-    })
-  });
-  test("400: Errors if topic query is invalid", () => {
-    return request(app)
-    .get("/api/articles?topic=not_a_topic")
-    .expect(400)
-    .then(({body}) => {
-      expect(body.msg).toBe("400: bad request")
-    });
-  });
-})
-
-describe("GET /api/articles/:article_id (comment_count)", () => {
-  test("200: Responds with total count of all comments with select article ID", () => {
-    return request(app)
-    .get("/api/articles/6")
-    .expect(200)
-    .then(({body}) => {
-      expect(body.article).toMatchObject({
-        author: expect.any(String),
-        title: expect.any(String),
-        article_id: 6,
-        topic: expect.any(String),
-        created_at: expect.any(String),
-        votes: expect.any(Number),
-        article_img_url: expect.any(String),
-        comment_count: expect.any(Number)
-      })
-    })
-  });
-  //400 error tests are complete in the previous GET with the same endpoint
 });
 
 describe("General server errors", () => {

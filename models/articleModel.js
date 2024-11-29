@@ -1,8 +1,7 @@
 const db = require("../db/connection")
 
 const selectArticleById = (article_id) => {
-    const SQLquery = `SELECT 
-    articles.author, articles.title, articles.article_id, articles.body, articles.topic, articles.created_at, articles.article_img_url, articles.votes,
+    const SQLquery = `SELECT articles.*,
     CAST(COUNT(comments.comment_id) AS INTEGER) AS comment_count
     FROM articles
     LEFT JOIN comments ON articles.article_id = comments.article_id
