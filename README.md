@@ -22,7 +22,7 @@ Run npm start to run listen.js
 
 
 ## Creating .env Files
-Create two .env files: .env.development and .env.test
+Create two .env files: .env.development and .env.test and set the PGDATABASE=nc_news and PGDATABASE=nc_news_test respectively. 
 
 ## Versions
 This was built using:
