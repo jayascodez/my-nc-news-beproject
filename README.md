@@ -1,7 +1,7 @@
 # My Northcoders News API BE Project 
 
 ## Description
-This project is a backend API designed for a news application. The API allows users to interact with the news articles, comments and user profiles. This project is built with node.js and interacts with a PostgreSQL database. The aim is to provide a robust, scalable backend to serve news data to the front end.
+A backend API designed for a news application, allowing users to interact with news articles, comments and user profiles. At the core, it allows users to search for users, topics, comments and articles and lets users interact with the database. This project is built with node.js and interacts with a PostgreSQL database, simulating the construction of a back-end server such as Reddit. The aim is to provide a robust, scalable backend to serve news data to the front end.
 
 ## Installation Instructions
 1. **Clone the repository**
@@ -22,7 +22,7 @@ Run npm start to run listen.js
 
 
 ## Creating .env Files
-Create two .env files: .env.development and .env.test and set the PGDATABASE=nc_news and PGDATABASE=nc_news_test respectively. 
+Create two .env files: .env.development and .env.test in the root and set the PGDATABASE=nc_news and PGDATABASE=nc_news_test respectively. 
 
 ## Versions
 This was built using:
