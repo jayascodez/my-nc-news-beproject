@@ -59,10 +59,6 @@
     "description": "creates a new comment on an article selected by ID",
     "queries": [],
     "exampleResponse": {
-      "newComment": {
-        "username": "butter_bridge",
-        "body": "I love all articles"
-      },
       "comment": [{
           "article_id": 3,
           "author": "butter_bridge",
@@ -71,18 +67,33 @@
           "created_at": "1604394720000",
           "votes": "0"
       }]
-    }
+    },
+    "newCommentToPost": {
+        "username": "butter_bridge",
+        "body": "I love all articles"
+      }
   },
   "PATCH /api/articles/:article_id": {
     "description": "updates an articles vote count, article selected by ID",
     "queries": ["inc_votes", "article_id"],
     "exampleResponse": {
+      "articles": [{
+      "title": "Living in the shadow of a great man",
+      "topic": "mitch",
+      "author": "butter_bridge",
+      "body": "I find this existence challenging",
+      "created_at": "1594329060000",
+      "votes": "100",
+      "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+    }]},
+    "examplePatchRequest": {"inc_votes": 5}
+  },
 
-    }
-  },
   "DELETE /api/comments/:comment_id": {
-    "description": "deletes an induvidual comment from comments table"
+    "description": "deletes an induvidual comment from comments table",
+    "exampleDeleteRequest": "/api/comments/5"
   },
+
   "GET /api/users": {
     "description": "serves an array of all users",
     "exampleResponse": {

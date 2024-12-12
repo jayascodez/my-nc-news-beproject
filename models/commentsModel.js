@@ -23,7 +23,7 @@ const sendCommentsByArticleId = (newComment, article_id) => {
     .then(( {rows} ) => {
         return rows[0]
     })
-}
+};
 
 const deleteCommentById = (comment_id) => {
     const SQLquery = `DELETE FROM comments WHERE comment_id = $1

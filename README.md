@@ -16,7 +16,9 @@ This project is a backend API designed for a news application. The API allows us
     run npm test to access tests
 
 ## Hosted Version
-https://nc-news-be-project-1ajv.onrender.com/api
+https://nc-news-be-project-1ajv.onrender.com/api.
+
+Run npm start to run listen.js
 
 
 ## Creating .env Files
