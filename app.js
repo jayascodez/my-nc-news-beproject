@@ -6,8 +6,10 @@ const {fetchArticleById, fetchArticles, patchArticlesByID} = require("./controll
 const {fetchCommentsByArticleId, postCommentsByArticleId, fetchCommentByID} = require("./controllers/commentsController")
 const {fetchUsers} = require("./controllers/usersController")
 const {customErrors, serverError} = require("./errorhandling")
+const cors = require('cors');
 
 app.use(express.json());
+app.use(cors());
 
 app.get("/api", (req, res) => {
     res.status(200).send({endpoints: endpointJson})
